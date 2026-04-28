@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proposta de Serviços – Projeto Express Airbnb – Studio Gollma</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+    :root {
+      --caramel: #B8864E;
+      --caramel-dark: #9A6F3C;
+      --caramel-light: #D4A96A;
+      --caramel-glow: #D4A870;
+      --olive: #8B8B5E;
+      --olive-dark: #6E6E48;
+      --olive-light: #A5A578;
+      --cream: #F5F0E8;
+      --cream-dark: #EDE6D9;
+      --white: #FFFFFF;
+      --dark: #2C2A25;
+      --dark-soft: #4A4740;
+      --text: #3D3A34;
+      --text-light: #6B665D;
+      --border: #E0D8CA;
+      --shadow: rgba(44, 42, 37, 0.08);
+      --shadow-md: rgba(44, 42, 37, 0.12);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: #F8F5F0;
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--white);
+      box-shadow: 0 4px 40px var(--shadow-md);
+      position: relative;
+    }
+
+    /* ===== COVER ===== */
+    .cover {
+      position: relative;
+      background: linear-gradient(160deg, var(--caramel) 0%, var(--caramel-dark) 40%, #8B6E3C 100%);
+      padding: 0;
+      overflow: hidden;
+      min-height: 500px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .cover::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 80%, rgba(0,0,0,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 50%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .cover-line-top {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(to right, transparent, var(--caramel-light), var(--cream), var(--caramel-light), transparent);
+      z-index: 3;
+    }
+
+    .cover-accent-left {
+      position: absolute; left: 40px; top: 40px; bottom: 40px;
+      width: 1px;
+      background: linear-gradient(to bottom, rgba(245,240,232,0.2), transparent 40%, transparent 60%, rgba(245,240,232,0.2));
+      z-index: 2;
+    }
+
+    .cover-accent-right {
+      position: absolute; right: 40px; top: 40px; bottom: 40px;
+      width: 1px;
+      background: linear-gradient(to bottom, rgba(245,240,232,0.2), transparent 40%, transparent 60%, rgba(245,240,232,0.2));
+      z-index: 2;
+    }
+
+    .cover-watermark {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 480px; height: 480px;
+      opacity: 0.06; pointer-events: none; z-index: 1;
+    }
+
+    .cover-watermark img { width: 100%; height: 100%; object-fit: contain; }
+
+    .cover-content {
+      position: relative; z-index: 4;
+      padding: 70px 60px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    .cover-logo { margin-bottom: 44px; }
+    .cover-logo img { max-width: 280px; height: auto; }
+
+    .cover-divider-wrap {
+      display: flex; align-items: center; gap: 16px; margin-bottom: 36px;
+    }
+
+    .cover-divider-line { width: 40px; height: 1px; background: rgba(245, 240, 232, 0.35); }
+    .cover-divider-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--cream); }
+
+    .cover-tag {
+      display: inline-block; font-size: 10px; font-weight: 600;
+      letter-spacing: 5px; text-transform: uppercase;
+      color: var(--cream); margin-bottom: 18px;
+    }
+
+    .cover-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 40px; font-weight: 300; color: var(--cream);
+      line-height: 1.25; margin-bottom: 10px; letter-spacing: 1px;
+    }
+
+    .cover-subtitle {
+      font-size: 13px; font-weight: 300;
+      color: rgba(245, 240, 232, 0.55);
+      letter-spacing: 3px; text-transform: uppercase;
+    }
+
+    /* ===== CLIENT BAR ===== */
+    .client-bar {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      background: var(--dark); color: var(--cream);
+    }
+
+    .client-bar-item { padding: 22px 30px; border-right: 1px solid rgba(245, 240, 232, 0.06); }
+    .client-bar-item:last-child { border-right: none; }
+
+    .client-bar-label {
+      font-size: 9px; font-weight: 600; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--caramel-light); margin-bottom: 4px;
+    }
+
+    .client-bar-value { font-size: 14px; font-weight: 500; color: var(--cream); }
+
+    /* ===== MAIN CONTENT ===== */
+    .content { padding: 50px 60px 40px; position: relative; }
+
+    .content-watermark {
+      position: absolute; bottom: 60px; right: 50px;
+      width: 220px; height: 220px; opacity: 0.02;
+      pointer-events: none; z-index: 0;
+    }
+
+    .content-watermark img { width: 100%; height: 100%; object-fit: contain; }
+
+    /* ===== NAV ===== */
+    .nav-bar {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin-bottom: 50px; padding-bottom: 30px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-bar a {
+      font-size: 10px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--text-light);
+      text-decoration: none; padding: 6px 14px;
+      border-radius: 3px; transition: all 0.3s ease; background: transparent;
+    }
+
+    .nav-bar a:hover { background: var(--cream); color: var(--caramel-dark); }
+
+    /* ===== SECTIONS ===== */
+    .section { margin-bottom: 45px; position: relative; z-index: 1; }
+
+    .section-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 42px; font-weight: 300; color: var(--border);
+      line-height: 1; margin-bottom: 2px;
+    }
+
+    .section-title {
+      font-size: 11px; font-weight: 700; letter-spacing: 4px;
+      text-transform: uppercase; color: var(--caramel-dark);
+      margin-bottom: 20px; padding-bottom: 12px;
+      border-bottom: 2px solid var(--caramel); display: inline-block;
+    }
+
+    .section-text {
+      font-size: 14px; font-weight: 400; color: var(--text);
+      line-height: 1.9; max-width: 680px;
+    }
+
+    .section-text strong { display: inline; }
+
+    /* ===== ESCOPO CARDS ===== */
+    .scope-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+
+    .scope-card {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 20px 24px; background: var(--cream);
+      border-radius: 6px; border-left: 3px solid var(--caramel);
+      transition: all 0.3s ease;
+    }
+
+    .scope-card:hover {
+      background: var(--cream-dark); border-left-color: var(--olive);
+      transform: translateX(4px);
+    }
+
+    .scope-icon {
+      width: 36px; height: 36px; min-width: 36px;
+      background: var(--caramel); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--cream); font-size: 14px; font-weight: 700; margin-top: 2px;
+    }
+
+    .scope-card-text { font-size: 14px; color: var(--text); line-height: 1.7; }
+    .scope-card-text strong { display: inline; color: var(--dark); }
+
+    /* ===== AMBIENTES GRID ===== */
+    .ambientes-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;
+    }
+
+    .ambiente-card {
+      padding: 28px 24px; background: var(--cream);
+      border-radius: 8px; text-align: center;
+      border: 1px solid var(--border); transition: all 0.3s ease;
+      position: relative; overflow: hidden;
+    }
+
+    .ambiente-card:hover {
+      border-color: var(--caramel); transform: translateY(-2px);
+      box-shadow: 0 8px 24px var(--shadow);
+    }
+
+    .ambiente-card-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 48px; font-weight: 300; color: var(--caramel);
+      line-height: 1; margin-bottom: 6px;
+    }
+
+    .ambiente-card-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--dark); margin-bottom: 10px;
+    }
+
+    .ambiente-card-detail {
+      font-size: 12px; color: var(--text-light); line-height: 1.6;
+    }
+
+    .ambiente-card-badge {
+      display: inline-block; margin-top: 12px;
+      padding: 4px 14px; border-radius: 20px;
+      font-size: 9px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; background: var(--caramel);
+      color: var(--cream);
+    }
+
+    .ambientes-total {
+      margin-top: 16px; padding: 20px 24px;
+      background: var(--dark); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; gap: 14px;
+    }
+
+    .ambientes-total-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--caramel-light);
+    }
+
+    .ambientes-total-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px; font-weight: 400; color: var(--cream);
+    }
+
+    /* ===== ENTREGÁVEIS ===== */
+    .deliverables-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;
+    }
+
+    .deliverable-card {
+      background: linear-gradient(135deg, var(--olive) 0%, var(--olive-dark) 100%);
+      border-radius: 10px; padding: 28px 24px;
+      color: var(--cream); position: relative; overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .deliverable-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(44, 42, 37, 0.2);
+    }
+
+    .deliverable-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 80% 30%, rgba(255,255,255,0.07) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .deliverable-card-icon {
+      font-size: 24px; margin-bottom: 14px;
+      position: relative; z-index: 1;
+    }
+
+    .deliverable-card-title {
+      font-size: 13px; font-weight: 600; color: var(--cream);
+      margin-bottom: 6px; position: relative; z-index: 1;
+    }
+
+    .deliverable-card-desc {
+      font-size: 12px; font-weight: 300;
+      color: rgba(245, 240, 232, 0.65);
+      line-height: 1.6; position: relative; z-index: 1;
+    }
+
+    .deliverable-card-badge {
+      display: inline-block; margin-top: 12px;
+      padding: 3px 10px; border-radius: 12px;
+      font-size: 9px; font-weight: 600; letter-spacing: 1px;
+      text-transform: uppercase;
+      background: rgba(245, 240, 232, 0.12); color: var(--cream);
+      position: relative; z-index: 1;
+    }
+
+    .deliverables-note {
+      margin-top: 14px; padding: 16px 20px;
+      background: var(--cream); border-radius: 6px;
+      border-left: 3px solid var(--olive);
+      font-size: 12px; font-style: italic; color: var(--text-light); line-height: 1.7;
+    }
+
+    /* ===== PRAZO ===== */
+    .timeline-bar {
+      display: flex; align-items: center; gap: 0;
+      margin-top: 20px; background: var(--cream);
+      border-radius: 8px; overflow: hidden;
+    }
+
+    .timeline-step { flex: 1; padding: 20px 24px; text-align: center; }
+
+    .timeline-step:first-child { background: var(--caramel); color: var(--cream); }
+    .timeline-step:nth-child(2) { background: var(--caramel-light); color: var(--dark); }
+    .timeline-step:last-child { background: var(--olive); color: var(--cream); }
+
+    .timeline-step-label {
+      font-size: 9px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; opacity: 0.7; margin-bottom: 4px;
+    }
+
+    .timeline-step-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px; font-weight: 500;
+    }
+
+    .timeline-step-desc { font-size: 11px; font-weight: 300; opacity: 0.8; margin-top: 2px; }
+
+    /* ===== INVESTIMENTO ===== */
+    .investment-section {
+      background: var(--dark); border-radius: 10px;
+      overflow: hidden; margin-top: 10px; position: relative;
+    }
+
+    .investment-watermark {
+      position: absolute; top: 50%; right: 30px;
+      transform: translateY(-50%);
+      width: 130px; height: 130px; opacity: 0.03;
+      pointer-events: none;
+    }
+
+    .investment-watermark img { width: 100%; height: 100%; object-fit: contain; }
+
+    .investment-header {
+      padding: 40px 40px 20px; text-align: center;
+      border-bottom: 1px solid rgba(245, 240, 232, 0.06);
+      position: relative; z-index: 1;
+    }
+
+    .investment-tag {
+      font-size: 9px; font-weight: 600; letter-spacing: 4px;
+      text-transform: uppercase; color: var(--caramel-light); margin-bottom: 10px;
+    }
+
+    .investment-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 52px; font-weight: 400; color: var(--cream); line-height: 1.1;
+    }
+
+    .investment-value-cents {
+      font-size: 28px; font-weight: 300; color: rgba(245, 240, 232, 0.45);
+    }
+
+    .investment-per {
+      font-size: 12px; font-weight: 300;
+      color: rgba(245, 240, 232, 0.45); margin-top: 4px;
+    }
+
+    .investment-breakdown {
+      display: grid; grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid rgba(245, 240, 232, 0.06);
+      position: relative; z-index: 1;
+    }
+
+    .investment-unit {
+      padding: 20px 30px; text-align: center;
+      border-right: 1px solid rgba(245, 240, 232, 0.04);
+    }
+
+    .investment-unit:last-child { border-right: none; }
+
+    .investment-unit-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--olive-light); margin-bottom: 4px;
+    }
+
+    .investment-unit-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px; font-weight: 400; color: var(--cream);
+    }
+
+    .payment-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      position: relative; z-index: 1;
+    }
+
+    .payment-item {
+      padding: 24px 30px; text-align: center;
+      border-right: 1px solid rgba(245, 240, 232, 0.04);
+    }
+
+    .payment-item:last-child { border-right: none; }
+
+    .payment-item-percent {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px; font-weight: 400; color: var(--caramel-light);
+    }
+
+    .payment-item-value {
+      font-size: 16px; font-weight: 500; color: var(--cream); margin: 4px 0;
+    }
+
+    .payment-item-label {
+      font-size: 11px; font-weight: 300; color: rgba(245, 240, 232, 0.45);
+    }
+
+    /* ===== CONDIÇÕES ===== */
+    .conditions-list { list-style: none; }
+
+    .conditions-list li {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 14px 0; border-bottom: 1px solid var(--border);
+      font-size: 14px; color: var(--text); line-height: 1.7;
+    }
+
+    .conditions-list li:last-child { border-bottom: none; }
+
+    .condition-icon {
+      width: 24px; height: 24px; min-width: 24px;
+      background: var(--cream); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 2px; color: var(--caramel); font-size: 12px; font-weight: 700;
+    }
+
+    .condition-highlight { display: inline; font-weight: 600; color: var(--dark); }
+
+    /* ===== VALIDADE ===== */
+    .validity-box {
+      display: flex; align-items: center; gap: 20px;
+      padding: 24px 30px;
+      background: linear-gradient(135deg, var(--cream) 0%, var(--cream-dark) 100%);
+      border-radius: 8px; border: 1px solid var(--border);
+    }
+
+    .validity-icon {
+      width: 48px; height: 48px; min-width: 48px;
+      background: var(--caramel); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--cream); font-size: 18px;
+    }
+
+    .validity-text { font-size: 14px; color: var(--text); }
+    .validity-text strong { display: inline; color: var(--dark); }
+
+    .validity-date {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px; font-weight: 500; color: var(--caramel-dark);
+    }
+
+    /* ===== CTA ===== */
+    .cta-section {
+      background: linear-gradient(160deg, var(--caramel) 0%, var(--caramel-dark) 50%, #8B6E3C 100%);
+      border-radius: 10px; padding: 50px 40px; text-align: center;
+      margin-top: 10px; position: relative; overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 70% 30%, rgba(255,255,255,0.08) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .cta-watermark {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 220px; height: 220px; opacity: 0.06;
+      pointer-events: none; z-index: 0;
+    }
+
+    .cta-watermark img { width: 100%; height: 100%; object-fit: contain; }
+
+    .cta-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px; font-weight: 400; color: var(--cream);
+      margin-bottom: 10px; position: relative; z-index: 1;
+    }
+
+    .cta-text {
+      font-size: 13px; font-weight: 300;
+      color: rgba(245, 240, 232, 0.6); margin-bottom: 28px;
+      position: relative; z-index: 1;
+    }
+
+    .cta-buttons {
+      display: flex; justify-content: center; gap: 16px;
+      flex-wrap: wrap; position: relative; z-index: 1;
+    }
+
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 30px; border-radius: 50px;
+      font-size: 12px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .cta-btn-primary { background: var(--cream); color: var(--caramel-dark); }
+
+    .cta-btn-primary:hover {
+      background: var(--white); transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+
+    .cta-btn-secondary {
+      background: transparent; color: var(--cream);
+      border: 1px solid rgba(245, 240, 232, 0.25);
+    }
+
+    .cta-btn-secondary:hover {
+      border-color: var(--cream); background: rgba(245, 240, 232, 0.08);
+    }
+
+    /* ===== FOOTER ===== */
+    .footer { background: var(--dark); padding: 0; position: relative; overflow: hidden; }
+
+    .footer-top-line {
+      height: 4px;
+      background: linear-gradient(to right, #8B6E3C, var(--caramel), var(--caramel-light), var(--caramel), #8B6E3C);
+    }
+
+    .footer-watermark {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 280px; height: 280px; opacity: 0.02;
+      pointer-events: none; z-index: 0;
+    }
+
+    .footer-watermark img { width: 100%; height: 100%; object-fit: contain; }
+
+    .footer-inner {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 30px; align-items: center;
+      padding: 40px 60px; position: relative; z-index: 1;
+    }
+
+    .footer-brand {
+      display: flex; flex-direction: column;
+      align-items: flex-start; gap: 12px;
+    }
+
+    .footer-logo img { max-width: 170px; height: auto; }
+
+    .footer-tagline {
+      font-size: 11px; font-weight: 300;
+      color: rgba(245, 240, 232, 0.3); letter-spacing: 0.5px; line-height: 1.5;
+    }
+
+    .footer-contacts { text-align: right; }
+
+    .footer-contact-item {
+      font-size: 12px; font-weight: 300;
+      color: rgba(245, 240, 232, 0.4); margin-bottom: 4px; line-height: 1.6;
+    }
+
+    .footer-contact-item strong {
+      display: inline; font-weight: 500; color: var(--caramel-light);
+    }
+
+    .footer-cnpj {
+      font-size: 10px; color: rgba(245, 240, 232, 0.18);
+      margin-top: 12px; letter-spacing: 1px;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(245, 240, 232, 0.05);
+      padding: 14px 60px; text-align: center;
+    }
+
+    .footer-bottom-text {
+      font-size: 9px; font-weight: 400; letter-spacing: 3px;
+      text-transform: uppercase; color: rgba(245, 240, 232, 0.12);
+    }
+
+    /* ===== DIVIDER ===== */
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border), transparent);
+      margin: 10px 0;
+    }
+
+    /* ===== ABOUT HIGHLIGHT ===== */
+    .about-highlight {
+      position: relative; padding: 28px 32px;
+      background: var(--cream); border-radius: 8px;
+      border-left: 4px solid var(--olive); margin-top: 16px;
+    }
+
+    .about-highlight p {
+      font-size: 13px; font-weight: 400;
+      color: var(--text-light); line-height: 1.8; font-style: italic;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 700px) {
+      .cover { min-height: 400px; }
+      .cover-content { padding: 50px 28px; }
+      .cover-logo img { max-width: 200px; }
+      .cover-title { font-size: 28px; }
+      .cover-watermark { width: 280px; height: 280px; }
+      .cover-accent-left, .cover-accent-right { display: none; }
+
+      .client-bar { grid-template-columns: 1fr; }
+      .client-bar-item {
+        border-right: none;
+        border-bottom: 1px solid rgba(245, 240, 232, 0.06);
+        padding: 14px 24px;
+      }
+
+      .content { padding: 30px 24px; }
+      .nav-bar { gap: 4px; }
+      .nav-bar a { font-size: 9px; padding: 5px 10px; }
+
+      .ambientes-grid { grid-template-columns: 1fr; }
+      .deliverables-grid { grid-template-columns: 1fr; }
+
+      .timeline-bar { flex-direction: column; }
+      .timeline-step { width: 100%; }
+
+      .investment-value { font-size: 38px; }
+      .investment-breakdown { grid-template-columns: 1fr; }
+      .investment-unit { border-right: none; border-bottom: 1px solid rgba(245,240,232,0.04); }
+
+      .payment-grid { grid-template-columns: 1fr; }
+      .payment-item { border-right: none; border-bottom: 1px solid rgba(245, 240, 232, 0.04); }
+
+      .cta-buttons { flex-direction: column; align-items: center; }
+
+      .footer-inner {
+        grid-template-columns: 1fr; padding: 30px 24px; text-align: center;
+      }
+      .footer-brand { align-items: center; }
+      .footer-contacts { text-align: center; }
+      .footer-bottom { padding: 14px 24px; }
+    }
+
+    /* ===== PRINT ===== */
+    @media print {
+      *, *::before, *::after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+
+      html, body {
+        width: 210mm; margin: 0 !important; padding: 0 !important;
+        background: white !important;
+      }
+
+      .page { max-width: 100% !important; width: 100% !important; margin: 0 !important; box-shadow: none !important; }
+      .nav-bar { display: none !important; }
+
+      .cover {
+        min-height: 100vh !important;
+        page-break-after: always !important; break-after: page !important;
+        background: linear-gradient(160deg, #B8864E 0%, #9A6F3C 40%, #8B6E3C 100%) !important;
+      }
+
+      .client-bar { background: #2C2A25 !important; page-break-inside: avoid !important; }
+      .content { padding: 40px 50px 30px !important; }
+
+      .section { page-break-inside: avoid !important; break-inside: avoid !important; margin-bottom: 35px !important; }
+      .section-divider { margin: 8px 0 !important; }
+
+      .scope-card {
+        page-break-inside: avoid !important; background: #F5F0E8 !important;
+        border-left: 3px solid #B8864E !important;
+      }
+
+      .scope-icon { background: #B8864E !important; color: #F5F0E8 !important; }
+
+      .ambiente-card { page-break-inside: avoid !important; background: #F5F0E8 !important; }
+      .ambiente-card-badge { background: #B8864E !important; color: #F5F0E8 !important; }
+      .ambientes-total { background: #2C2A25 !important; }
+
+      .deliverable-card {
+        page-break-inside: avoid !important;
+        background: linear-gradient(135deg, #8B8B5E 0%, #6E6E48 100%) !important;
+      }
+
+      .timeline-step:first-child { background: #B8864E !important; }
+      .timeline-step:nth-child(2) { background: #D4A96A !important; }
+      .timeline-step:last-child { background: #8B8B5E !important; }
+
+      .investment-section {
+        page-break-inside: avoid !important; background: #2C2A25 !important;
+      }
+
+      .investment-tag { color: #D4A96A !important; }
+      .investment-value { color: #F5F0E8 !important; }
+      .payment-item-percent { color: #D4A96A !important; }
+      .payment-item-value { color: #F5F0E8 !important; }
+
+      .conditions-list li { page-break-inside: avoid !important; }
+      .condition-icon { background: #F5F0E8 !important; color: #B8864E !important; }
+
+      .validity-box { page-break-inside: avoid !important; background: #F5F0E8 !important; }
+      .validity-icon { background: #B8864E !important; }
+
+      .cta-section {
+        page-break-inside: avoid !important;
+        background: linear-gradient(160deg, #B8864E 0%, #9A6F3C 50%, #8B6E3C 100%) !important;
+      }
+
+      .cta-btn-primary { background: #F5F0E8 !important; color: #9A6F3C !important; }
+      .cta-btn-secondary { border: 1px solid rgba(245,240,232,0.4) !important; color: #F5F0E8 !important; }
+
+      .about-highlight { background: #F5F0E8 !important; border-left: 4px solid #8B8B5E !important; page-break-inside: avoid !important; }
+
+      .footer {
+        page-break-inside: avoid !important; background: #2C2A25 !important;
+      }
+
+      .footer-top-line {
+        background: linear-gradient(to right, #8B6E3C, #B8864E, #D4A96A, #B8864E, #8B6E3C) !important;
+      }
+
+      .footer-contact-item strong { color: #D4A96A !important; }
+
+      a { text-decoration: none !important; }
+      * { transition: none !important; transform: none !important; }
+
+      .cover-watermark, .content-watermark, .cta-watermark,
+      .footer-watermark, .investment-watermark { opacity: 0.04 !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ===== COVER ===== -->
+  <div class="cover">
+    <div class="cover-line-top"></div>
+    <div class="cover-accent-left"></div>
+    <div class="cover-accent-right"></div>
+    <div class="cover-watermark">
+      <img src="https://i.ibb.co/DHdKvHtM/Marca-d-gua4.png" alt="" />
+    </div>
+    <div class="cover-content">
+      <div class="cover-logo">
+        <img src="https://i.ibb.co/DHdKvHtM/Marca-d-gua4.png" alt="Studio Gollma" />
+      </div>
+      <div class="cover-divider-wrap">
+        <div class="cover-divider-line"></div>
+        <div class="cover-divider-dot"></div>
+        <div class="cover-divider-line"></div>
+      </div>
+      <div class="cover-tag">Proposta de Serviços</div>
+      <h1 class="cover-title">Projeto Express — Airbnb</h1>
+      <p class="cover-subtitle">Arquitetura &amp; Interiores</p>
+    </div>
+  </div>
+
+  <!-- ===== CLIENT BAR ===== -->
+  <div class="client-bar">
+    <div class="client-bar-item">
+      <div class="client-bar-label">Projeto</div>
+      <div class="client-bar-value">Apartamentos Airbnb</div>
+    </div>
+    <div class="client-bar-item">
+      <div class="client-bar-label">Tipologia</div>
+      <div class="client-bar-value">Locação por Temporada</div>
+    </div>
+    <div class="client-bar-item">
+      <div class="client-bar-label">Data</div>
+      <div class="client-bar-value">28 de abril de 2026</div>
+    </div>
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="content">
+
+    <div class="content-watermark">
+      <img src="https://i.ibb.co/DHdKvHtM/Marca-d-gua4.png" alt="" />
+    </div>
+
+    <!-- NAV -->
+    <nav class="nav-bar">
+      <a href="#sobre">Sobre</a>
+      <a href="#escopo">Escopo</a>
+      <a href="#ambientes">Ambientes</a>
+      <a href="#entregaveis">Entregáveis</a>
+      <a href="#prazo">Prazo</a>
+      <a href="#investimento">Investimento</a>
+      <a href="#condicoes">Condições</a>
+      <a href="#validade">Validade</a>
+    </nav>
+
+    <!-- 01 - SOBRE -->
+    <section class="section" id="sobre">
+      <div class="section-number">01</div>
+      <div class="section-title">Sobre o Serviço</div>
+      <p class="section-text">
+        Desenvolvimento de projeto express de interiores para <strong>2 apartamentos</strong>, com foco na valorização estética, funcional e comercial dos espaços, visando aumentar a atratividade dos anúncios e potencializar a <strong>taxa de ocupação e retorno financeiro</strong>.
+      </p>
+      <div class="about-highlight">
+        <p>Projeto com abordagem estratégica e otimizada — pensado para transformar os apartamentos em espaços que vendem por si, elevando a percepção de valor nos anúncios e a experiência dos hóspedes.</p>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 02 - ESCOPO -->
+    <section class="section" id="escopo">
+      <div class="section-number">02</div>
+      <div class="section-title">Escopo do Projeto</div>
+      <p class="section-text" style="margin-bottom: 18px;">Para cada apartamento:</p>
+      <div class="scope-grid">
+        <div class="scope-card">
+          <div class="scope-icon">1</div>
+          <div class="scope-card-text">
+            <strong>Conceito visual e identidade</strong> — definição de atmosfera, estilo e linguagem estética de cada unidade.
+          </div>
+        </div>
+        <div class="scope-card">
+          <div class="scope-icon">2</div>
+          <div class="scope-card-text">
+            <strong>Paleta de cores e pintura</strong> — sugestões cromáticas estratégicas para cada ambiente, pensando em fotogenia e acolhimento.
+          </div>
+        </div>
+        <div class="scope-card">
+          <div class="scope-icon">3</div>
+          <div class="scope-card-text">
+            <strong>Indicação de mobiliário</strong> — priorização de peças soltas com boa relação custo-benefício e impacto visual.
+          </div>
+        </div>
+        <div class="scope-card">
+          <div class="scope-icon">4</div>
+          <div class="scope-card-text">
+            <strong>Decoração e composição</strong> — orientações de styling para criar ambientes atraentes e instagramáveis.
+          </div>
+        </div>
+        <div class="scope-card">
+          <div class="scope-icon">5</div>
+          <div class="scope-card-text">
+            <strong>Recomendações de iluminação</strong> — soluções práticas para criar cenários aconchegantes e funcionais.
+          </div>
+        </div>
+        <div class="scope-card">
+          <div class="scope-icon">6</div>
+          <div class="scope-card-text">
+            <strong>Melhorias estratégicas</strong> — indicação de intervenções de alto impacto e baixo custo para elevar a percepção do espaço.
+          </div>
+        </div>
+        <div class="scope-card">
+          <div class="scope-icon">7</div>
+          <div class="scope-card-text">
+            <strong>Detalhamento de marcenaria</strong> — orientações pontuais quando necessário para aproveitamento inteligente dos espaços.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 03 - AMBIENTES -->
+    <section class="section" id="ambientes">
+      <div class="section-number">03</div>
+      <div class="section-title">Ambientes Contemplados</div>
+      <div class="ambientes-grid">
+        <div class="ambiente-card">
+          <div class="ambiente-card-number">01</div>
+          <div class="ambiente-card-label">Apartamento 1</div>
+          <div class="ambiente-card-detail">02 ambientes + 01 banheiro</div>
+          <div class="ambiente-card-badge">Completo</div>
+        </div>
+        <div class="ambiente-card">
+          <div class="ambiente-card-number">02</div>
+          <div class="ambiente-card-label">Apartamento 2</div>
+          <div class="ambiente-card-detail">02 ambientes + 01 banheiro</div>
+          <div class="ambiente-card-badge">Completo</div>
+        </div>
+      </div>
+      <div class="ambientes-total">
+        <span class="ambientes-total-label">Total</span>
+        <span class="ambientes-total-value">2 apartamentos completos</span>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 04 - ENTREGÁVEIS -->
+    <section class="section" id="entregaveis">
+      <div class="section-number">04</div>
+      <div class="section-title">Entregáveis</div>
+      <div class="deliverables-grid">
+        <div class="deliverable-card">
+          <div class="deliverable-card-icon">◈</div>
+          <div class="deliverable-card-title">Pranchas Visuais</div>
+          <div class="deliverable-card-desc">Moodboard + conceito estético de cada unidade</div>
+          <div class="deliverable-card-badge">Por apartamento</div>
+        </div>
+        <div class="deliverable-card">
+          <div class="deliverable-card-icon">◇</div>
+          <div class="deliverable-card-title">Lista de Sugestões</div>
+          <div class="deliverable-card-desc">Mobiliário e decoração com referências práticas</div>
+          <div class="deliverable-card-badge">Por apartamento</div>
+        </div>
+        <div class="deliverable-card">
+          <div class="deliverable-card-icon">▣</div>
+          <div class="deliverable-card-title">Orientações de Execução</div>
+          <div class="deliverable-card-desc">Pintura, composição, layout e melhorias</div>
+          <div class="deliverable-card-badge">Por apartamento</div>
+        </div>
+      </div>
+      <div class="deliverables-note">
+        Todos os entregáveis são produzidos individualmente para cada apartamento, respeitando suas características e potenciais específicos.
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 05 - PRAZO -->
+    <section class="section" id="prazo">
+      <div class="section-number">05</div>
+      <div class="section-title">Prazo Estimado</div>
+      <div class="timeline-bar">
+        <div class="timeline-step">
+          <div class="timeline-step-label">Início</div>
+          <div class="timeline-step-value">Dia 0</div>
+          <div class="timeline-step-desc">Recebimento dos materiais</div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-step-label">Produção</div>
+          <div class="timeline-step-value">10–15</div>
+          <div class="timeline-step-desc">dias úteis</div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-step-label">Entrega</div>
+          <div class="timeline-step-value">Final</div>
+          <div class="timeline-step-desc">2 projetos + ajustes</div>
+        </div>
+      </div>
+      <div class="about-highlight" style="margin-top: 16px;">
+        <p>O prazo inicia a partir do envio de todas as informações necessárias: fotos dos espaços, medidas, briefing e referências visuais do cliente.</p>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 06 - INVESTIMENTO -->
+    <section class="section" id="investimento">
+      <div class="section-number">06</div>
+      <div class="section-title">Investimento</div>
+      <div class="investment-section">
+        <div class="investment-watermark">
+          <img src="https://i.ibb.co/DHdKvHtM/Marca-d-gua4.png" alt="" />
+        </div>
+        <div class="investment-header">
+          <div class="investment-tag">Valor Total</div>
+          <div class="investment-value">R$ 3.000<span class="investment-value-cents">,00</span></div>
+          <div class="investment-per">2 apartamentos · R$ 1.500 por unidade</div>
+        </div>
+        <div class="investment-breakdown">
+          <div class="investment-unit">
+            <div class="investment-unit-label">Apartamento 1</div>
+            <div class="investment-unit-value">R$ 1.500,00</div>
+          </div>
+          <div class="investment-unit">
+            <div class="investment-unit-label">Apartamento 2</div>
+            <div class="investment-unit-value">R$ 1.500,00</div>
+          </div>
+        </div>
+        <div class="payment-grid">
+          <div class="payment-item">
+            <div class="payment-item-percent">50%</div>
+            <div class="payment-item-value">R$ 1.500,00</div>
+            <div class="payment-item-label">Na aprovação da proposta</div>
+          </div>
+          <div class="payment-item">
+            <div class="payment-item-percent">50%</div>
+            <div class="payment-item-value">R$ 1.500,00</div>
+            <div class="payment-item-label">Na entrega final</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 07 - CONDIÇÕES -->
+    <section class="section" id="condicoes">
+      <div class="section-number">07</div>
+      <div class="section-title">Condições</div>
+      <ul class="conditions-list">
+        <li>
+          <span class="condition-icon">✓</span>
+          <span>Inclusa <span class="condition-highlight">01 rodada de ajustes por apartamento</span> — para garantir que o projeto atenda às expectativas.</span>
+        </li>
+        <li>
+          <span class="condition-icon">✕</span>
+          <span><span class="condition-highlight">Não inclui</span> acompanhamento de obra ou execução — o projeto é consultivo e estratégico.</span>
+        </li>
+        <li>
+          <span class="condition-icon">!</span>
+          <span>Alterações adicionais ou mudanças de escopo poderão ser cobradas à parte, com aprovação prévia.</span>
+        </li>
+        <li>
+          <span class="condition-icon">◆</span>
+          <span>Projeto com caráter <span class="condition-highlight">estratégico e otimizado</span> — modelo express focado em resultado comercial.</span>
+        </li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 08 - VALIDADE -->
+    <section class="section" id="validade">
+      <div class="section-number">08</div>
+      <div class="section-title">Validade</div>
+      <div class="validity-box">
+        <div class="validity-icon">⏱</div>
+        <div class="validity-text">
+          <p>Esta proposta é válida por <strong>7 dias</strong> a partir da data de envio.</p>
+          <div class="validity-date">Válida até 05 de maio de 2026</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- CTA -->
+    <div class="cta-section">
+      <div class="cta-watermark">
+        <img src="https://i.ibb.co/DHdKvHtM/Marca-d-gua4.png" alt="" />
+      </div>
+      <h2 class="cta-title">Pronto para transformar seus apartamentos?</h2>
+      <p class="cta-text">Entre em contato para aprovar a proposta e elevar o potencial dos seus espaços no Airbnb.</p>
+      <div class="cta-buttons">
+        <a href="https://wa.me/5579991444898" class="cta-btn cta-btn-primary">✦ Aprovar Proposta</a>
+        <a href="mailto:gollmastudio@gmail.com" class="cta-btn cta-btn-secondary">✉ Enviar E-mail</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <div class="footer">
+    <div class="footer-top-line"></div>
+    <div class="footer-watermark">
+      <img src="https://i.ibb.co/DHdKvHtM/Marca-d-gua4.png" alt="" />
+    </div>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <img src="https://i.ibb.co/DHdKvHtM/Marca-d-gua4.png" alt="Studio Gollma" />
+        </div>
+        <div class="footer-tagline">Arquitetura com propósito, estética e inovação</div>
+      </div>
+      <div class="footer-contacts">
+        <div class="footer-contact-item"><strong>☎</strong> (79) 99144-4898</div>
+        <div class="footer-contact-item"><strong>✉</strong> gollmastudio@gmail.com</div>
+        <div class="footer-contact-item"><strong>◎</strong> @studiogollma</div>
+        <div class="footer-contact-item"><strong>⚑</strong> Av. Dr. José Machado de Souza, 220, sala 1520 – Jardins, Aracaju-SE, 49025-740</div>
+        <div class="footer-cnpj">CNPJ: 60.227.117/0001-34</div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-bottom-text">studio gollma · todos os direitos reservados</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
